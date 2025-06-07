@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventEase - Event Invitation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/invitation.css' %}">
+</head>
+<body>
+  <div class="floating-shapes">
+    <div class="shape1"></div>
+    <div class="shape2"></div>
+    <div class="shape3"></div>
+  </div>
+
+  <div class="container">
+    <div class="logo">
+      <h1>Event<span>Ease</span></h1>
+      <div class="badge">
+        <i class="fas fa-envelope-open-text"></i>
+        You're Invited!
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="event-header">
+        <h2 id="eventName">{{ guest.event.event_name }}</h2>
+      </div>
+
+      <div class="event-details">
+        <div class="detail-item">
+          <i class="fas fa-user-tie"></i>
+          <div class="detail-content">
+            <h4>ORGANIZER</h4>
+            <p id="organizerName">{{ guest.event.client.name }}</p>
+          </div>
+        </div>
+        <div class="detail-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <div class="detail-content">
+            <h4>LOCATION</h4>
+            <p id="eventLocation">{{ guest.event.event_location }}</p>
+          </div>
+        </div>
+        <div class="detail-item">
+          <i class="fas fa-calendar-alt"></i>
+          <div class="detail-content">
+            <h4>DATE</h4>
+            <p id="eventDate">{{ guest.event.event_date|date:"F j, Y" }}</p>
+          </div>
+        </div>
+        <div class="detail-item">
+          <i class="fas fa-clock"></i>
+          <div class="detail-content">
+            <h4>TIME</h4>
+            <p id="eventTime">
+              {{ guest.event.event_start_time|time:"g:i A" }}
+              –
+              {{ guest.event.event_end_time|time:"g:i A" }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="invite-message">
+        <p id="inviteMessage">
+          Dear {{ guest.guest_name }}, we’re thrilled to invite you to
+          <strong>{{ guest.event.event_name }}</strong>.  Please RSVP below:
+        </p>
+      </div>
+
+      <div class="decision-buttons">
+        <button type="button" class="btn btn-accept" id="acceptBtn">
+          <i class="fas fa-check-circle"></i> I'll Attend
+        </button>
+        <button type="button" class="btn btn-decline" id="declineBtn">
+          <i class="fas fa-times-circle"></i> I Can't Attend
+        </button>
+      </div>
+
+      <!-- Decline Form -->
+      <div class="form-section" id="declineForm" style="display:none;">
+        <div class="form-group">
+          <label for="declineReason">We're sorry you can't attend it. Could you let us know why?</label>
+          <textarea id="declineReason" rows="4" placeholder="Please share your reason..."></textarea>
+          <div class="error-text" id="declineReasonError">Please provide a reason for declining.</div>
+        </div>
+        <button type="button" class="btn btn-submit" id="submitDecline">Submit Response</button>
+      </div>
+
+      <!-- Accept Form -->
+      <div class="form-section" id="acceptForm" style="display:none;">
+        <div class="form-group">
+            <label for="attendeeCount">
+                How many people will be attending (max {{ guest.max_companions }})?
+            </label>
+            <select id="attendeeCount">
+                <option value="">Select number of attendees</option>
+                {% for i in companion_range %}
+                <option value="{{ i }}">{{ i }} {{ i|pluralize:"person,people" }}</option>
+                {% endfor %}
+            </select>
+            <div class="error-text" id="attendeeCountError">
+              Please select the number of attendees (up to {{ guest.max_companions }}).
+            </div>
+        </div>
+
+        <div id="memberFormsContainer">
+          <!-- JS-generated member forms -->
+        </div>
+
+        <div class="terms-section">
+          <h3>Event Terms &amp; Conditions</h3>
+          <ul class="terms-list">
+            <li>Every person must have a unique event pass with QR code to enter the venue.</li>
+            <li>Attendees cannot enter the event without a valid invitation pass with QR code.</li>
+            <li>Every accompanying person aged 3 years and above must have a separate QR code pass.</li>
+            <li>QR codes will be sent to the provided email addresses after registration confirmation.</li>
+            <li>Event passes are non-transferrable and will be verified at entry.</li>
+            <li>The organizer reserves the right to deny entry if any information provided is found incorrect.</li>            
+          </ul>
+          <div class="checkbox-wrapper">
+            <input type="checkbox" id="termsAgreed">
+            <label for="termsAgreed">I agree to the terms and conditions.</label>
+          </div>
+          <div class="error-text" id="termsError">You must agree to proceed.</div>
+        </div>
+        <div class="loading-animation" id="acceptLoader"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+        <button  type="button" class="btn btn-submit" id="submitAccept">Submit RSVP</button>
+      </div>
+    </div>
+    <!-- Success Message -->
+
+    <div id="popupOverlay" class="overlay" style="display:none;"></div>
+
+    <div class="success-popup" id="rsvpSuccessPopup">
+      <div class="success-icon">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark-check" fill="none" d="M14 27l8 8 16-16"/>
+        </svg>
+      </div>
+      <h3>Thank you!</h3>
+      <!-- add this id -->
+      <p id="rsvpSuccessText">
+        Your RSVP has been received. You'll get your passes by email soon.
+      </p>
+      <button class="btn success-button" id="closeSuccess">OK</button>
+    </div>
+  </div>
+
+  <!-- Pass along guest_id and max_companions for JS -->
+  
+  <script src="{% static 'js/invitation.js' %}"></script>
+  <script>
+    window.GUEST_DATA = {
+      guestId:            "{{ guest.guest_id }}",
+      maxCompanions:      "{{ guest.max_companions }}",
+      apiUrl:             "{% url 'api_respond_invitation' %}",
+      initialAcceptStatus: "{{ initial_accept_status }}",
+      initialDeclineReason: "{{ initial_decline_reason|escapejs }}",
+    };
+  </script>
+</body>
+</html>

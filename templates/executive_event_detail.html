@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Overview — {{ event.event_name }}</title>
+
+  <!-- Fonts & CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/executive_event_detail.css' %}" />
+
+  <!-- 1) Guest data JSON -->
+  <script id="guest-data" type="application/json">
+    {
+      "invited": {{ total_invited_members|default:0 }},
+      "checked_in": {{ total_checked_in_members|default:0 }}
+    }
+  </script>
+
+  <!-- 2) Vendor chart config JSON -->
+  <script id="vendor-chart-data" type="application/json">
+    {{ vendor_chart_json|safe }}
+  </script>
+
+  <!-- 3) Timeline steps JSON -->
+  <script id="timeline-data" type="application/json">
+    {{ timeline_steps_json|safe }}
+  </script>
+  <script id="event-data" type="application/json">
+    { "event_id": "{{ event.event_id }}" }
+  </script>
+</head>
+<body>
+  <header class="top-nav">
+    <h1>EventEase — {{ event.event_name }}</h1>
+    <nav>
+      <a href="{% url 'generate_report' event.event_id %}" class="btn">Generate Report</a>
+      <a href="{% url 'executive_dashboard' %}#events">Back to Events</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Basic Info -->
+    <section class="card">
+      <h2>Basic Information</h2>
+      <dl class="info-grid">
+        <dt>Client</dt><dd>{{ event.client.name }}</dd>
+        <dt>Date</dt><dd>{{ event.event_date }}</dd>
+        <dt>Location</dt><dd>{{ event.event_location }}</dd>
+        <dt>Size</dt><dd>{{ event.event_size }} guests</dd>
+        <dt>Event Package</dt>
+          <dd>{{ event.event_package_name }} (₹{{ event.event_package_price }})</dd>
+        <dt>Vendor Package</dt>
+          <dd>{{ event.vendor_package_name }} (₹{{ event.vendor_package_price }})</dd>
+      </dl>
+    </section>
+
+    <!-- QR-Scanner for Guest Entry -->
+    <section class="card">
+      <h2>Guest Check-In</h2>
+      <div id="qr-reader" style="width:100%; max-width:400px; display:none;"></div>
+      <div id="qr-reader-results" class="qr-result">Click “Start Scan” to begin.</div>
+      <button id="startScanBtn" class="btn">Start Scan</button>
+      <button id="flipCameraBtn" class="btn" style="display: none;">Flip Camera</button>
+      <button id="stopScanBtn" class="btn" style="display:none;">Stop Scan</button>
+    </section>
+    
+    <section class="card funds-card">
+      <h2>Funds</h2>
+      <h3>₹{{ finance.total }}</h3>
+    </section>
+
+    <!-- Guest Stats & Chart -->
+    <section class="card">
+      <h2>Guests</h2>
+      <ul class="stats-list">
+        <li>Total Invited <strong id="invitedCount">—</strong></li>
+        <li>Checked-In <strong id="checkedInCount">—</strong></li>
+        <li>Remaining <strong id="remainingCount">—</strong></li>
+      </ul>
+      <canvas id="guestChart"></canvas>
+    </section>
+
+    <!-- Timeline -->
+    <section class="card">
+      <h2>Event Timeline</h2>
+      <ul class="timeline"></ul>
+    </section>
+
+    <!-- Vendor Requirements & Confirmed -->
+    <section class="card">
+      <h2>Vendors</h2>
+      <ul class="stats-list">
+        {% for vt, stats in vendor_stats.items %}
+        <li>
+          {{ vt|capfirst }} 
+          <strong>{{ stats.required }} required / {{ stats.confirmed }} confirmed</strong>
+        </li>
+        {% endfor %}
+      </ul>
+      <h3>Confirmed Vendors</h3>
+      <table class="data-table">
+        <thead>
+          <tr><th>Name</th><th>Type</th><th>Salary (₹)</th></tr>
+        </thead>
+        <tbody>
+          {% for v in confirmed_vendors %}
+          <tr>
+            <td>{{ v.name }}</td>
+            <td>{{ v.vendor_type }}</td>
+            <td>₹{{ v.salary }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Chart.js & QR lib -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <!-- Your custom JS -->
+  <script src="{% static 'js/executive_event_detail.js' %}"></script>
+</body>
+</html>

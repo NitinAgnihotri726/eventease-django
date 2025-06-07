@@ -1,0 +1,568 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventEase - Automated Event Management</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script id="chart-data" type="application/json">
+    {{ chart_data_json|safe }}
+  </script>
+
+  <script id="timeline-data" type="application/json">
+    {{ steps_json|safe }}
+  </script>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h3>EventEase</h3>
+      <p>Automated Event Management</p>
+      <button class="sidebar-close" aria-label="Close menu">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+    </div>
+    <div class="sidebar-menu">
+      <ul>
+        <li id="nav-event-details">
+          <a href="#event-details">
+            <i class="fa-solid fa-calendar-plus"></i>
+            <span>Event Details</span>
+          </a>
+        </li>
+        <li id="nav-vendor-registration">
+          <a href="#vendor-registration">
+            <i class="fa-solid fa-store"></i>
+            <span>Vendor Registration</span>
+          </a>
+        </li>
+        <li id="nav-addons">
+          <a href="#addons">
+            <i class="fa-solid fa-utensils"></i>
+            <span>Add‑On Foods</span>
+          </a>
+        </li>
+        <li id="nav-payment">
+          <a href="#payment">
+            <i class="fa-solid fa-credit-card"></i>
+            <span>Payment</span>
+          </a>
+        </li>
+        <!-- Post-payment sections -->
+        <li id="nav-guest-addition">
+          <a href="#guest-addition">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Guest Addition</span>
+          </a>
+        </li>
+        <li id="nav-dashboard">
+          <a href="#dashboard">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li id="nav-funds">
+          <a href="#funds">
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+            <span>Funds</span>
+          </a>
+        </li>
+        <li id="nav-logout">
+          <a href="#" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Log‑out</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="container">
+      <!-- Header with Profile Corner -->
+      <div class="header">
+        <button id="menu-toggle" class="menu-toggle">
+          <i class="fa fa-bars"></i>
+        </button>
+        <h1 class="header-title" >Event Overview</h1>
+        <div class="user-profile">
+          <div class="user-avatar">
+            {{ client_name|slice:":2"|upper }}
+          </div>
+          <div class="user-info">
+            <div class="user-username">{{ client_username }}</div>
+            <div class="user-fullname">{{ client_name }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Details Form -->
+      <div class="form-step active" id="event-details">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2>Event Details</h2>
+          </div>
+          <div class="card-body">
+            <form id="event-details-form">
+              <div class="form-group">
+                <label for="event-name">Event Name</label>
+                <input type="text" id="event-name" class="form-control" placeholder="Enter event name" required />
+              </div>
+              <div class="form-group">
+                <label for="event-type">Event Type</label>
+                <select id="event-type" class="form-select" required>
+                  <option value="">Select event type</option>
+                  <option value="wedding">Wedding</option>
+                  <option value="birthday">Birthday Party</option>
+                  <option value="anniversary">Anniversary</option>
+                  <option value="corporate">Corporate Event</option>
+                  <option value="community">Community Event</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="event-date">Event Date</label>
+                <input type="date" id="event-date" class="form-control" required />
+                <small id="date-condition" style="color: red;"></small>
+              </div>
+              <div class="form-group">
+                <label for="event-start-time">Event Start Time</label>
+                <input type="time" id="event-start-time" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="event-end-time">Event End Time</label>
+                <input type="time" id="event-end-time" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="event-location">Event Location</label>
+                <input type="text" id="event-location" class="form-control" placeholder="Enter event venue/location" required />
+              </div>
+              <div class="form-group">
+                <label for="expected-guests">Select Event Size</label>
+                <select id="expected-guests" class="form-select" required>
+                  <option value="">Select Event Size</option>
+                  <option value="100">Small Event (100 Guests)</option>
+                  <option value="200">Medium Event (200 Guests)</option>
+                  <option value="500">Large Event (500 Guests)</option>
+                  <option value="1000">Grand Event (1000 Guests)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="event-package-cards">Select Event Package</label>
+                <div id="event-package-cards" class="package-cards"></div>
+                <input type="hidden" id="selected-package" name="selected-package" required />
+                <input type="hidden" id="package-price" name="package-price" />
+                <input type="hidden" id="guest-capacity" name="guest-capacity" />
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Next: Vendor Registration</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vendor Registration Form -->
+      <div class="form-step" id="vendor-registration">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2>Vendor Registration</h2>
+          </div>
+          <div class="card-body">
+            <form id="vendor-registration-form">
+              <div class="form-group">
+                <div class="checkbox-container">
+                  <input type="checkbox" id="use-own-vendors" name="use-own-vendors" />
+                  <label for="use-own-vendors">I have my own vendors</label>
+                </div>
+              </div>
+              <div id="vendor-package-cards" class="package-cards"></div>
+              <input type="hidden" id="selected-vendor-package" name="selected-vendor-package" />
+              <input type="hidden" id="vendor-package-price" name="vendor-package-price" />
+              <div id="own-vendors-section" style="display: none;">
+                <div class="form-group">
+                  <label for="vendor-name">Vendor Name</label>
+                  <input type="text" id="vendor-name" class="form-control" placeholder="Enter vendor name" />
+                </div>
+                <div class="form-group">
+                  <label for="vendor-type">Vendor Type</label>
+                  <select id="vendor-type" class="form-select">
+                    <option value="">Select vendor type</option>
+                    <option value="catering">Catering</option>
+                    <option value="decoration">Decoration</option>
+                    <option value="photography">Photography</option>
+                    <option value="music">Music & Entertainment</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="vendor-contact">Contact Number</label>
+                  <input type="tel" id="vendor-contact" class="form-control" placeholder="Enter contact number" />
+                </div>
+                <div class="form-group">
+                  <label for="vendor-email">Email Address</label>
+                  <input type="email" id="vendor-email" class="form-control" placeholder="Enter email address" />
+                </div>
+                <div class="form-group">
+                  <button type="button" id="add-vendor-btn" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Add Vendor
+                  </button>
+                </div>
+                <div class="vendor-list-container">
+                  <table class="guest-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="vendor-list">
+                      <tr class="no-guvendors">
+                        <td colspan="4" style="text-align: center;">No vendors added yet</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary prev-step" data-step="event-details">Previous: Event Details</button>
+                <button type="submit" class="btn btn-primary">Next: Add‑On Foods</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add‑On Foods Form -->
+      <div class="form-step" id="addons">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2>Add‑On Foods</h2>
+          </div>
+          <div class="card-body">
+            <div class="food-addon-container">
+              <div class="relative mb-4">
+                <input type="text" id="food-search" placeholder="Search vegetarian food items..." class="food-search" />
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              </div>
+              <div class="category-buttons" id="food-category-buttons">
+                <!-- Category buttons will be rendered dynamically -->
+              </div>
+              <div id="food-items-list" class="food-items-list">
+                <!-- Food items will be rendered dynamically -->
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary prev-step" data-step="vendor-registration">Previous: Vendor Registration</button>
+              <button type="button" id="addons-submit-btn" class="btn btn-primary">Submit Add‑On Items</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add‑On Foods Summary -->
+      <div class="form-step" id="addons-summary">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2>Add‑On Foods Summary</h2>
+          </div>
+          <div class="card-body">
+            <div id="addons-summary-list">
+              <!-- Summary of selected food items will be rendered here -->
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary prev-step" data-step="addons">Previous: Add‑On Foods</button>
+              <button type="button" id="addons-confirm-btn" class="btn btn-primary">Confirm &amp; Proceed to Payment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Form -->
+      <div class="form-step" id="payment">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2>Payment</h2>
+          </div>
+          <div class="card-body">
+            <form id="payment-form">
+              <div class="payment-summary">
+                <h3>Payment Summary</h3>
+                <div class="payment-row">
+                  <span>Event Package:</span>
+                  <span id="summary-event-package">-</span>
+                </div>
+                <div class="payment-row">
+                  <span>Package Price:</span>
+                  <span id="summary-package-price">-</span>
+                </div>
+                <div class="payment-row">
+                  <span>Vendor Package Price:</span>
+                  <span id="summary-vendor-package-price">-</span>
+                </div>
+                <div class="payment-row">
+                  <span>Add‑On Foods Total:</span>
+                  <span id="summary-addons-total">-</span>
+                </div>
+                <div class="payment-row">
+                  <span>Event Size:</span>
+                  <span id="summary-guest-capacity">-</span>
+                </div>
+                <div class="payment-total">
+                  Total: <span id="summary-total">-</span>
+                </div>
+              </div>
+              <div class="payment-methods">
+                <div class="payment-method" data-method="credit-card">
+                  <i class="fa-solid fa-credit-card"></i>
+                  Credit Card
+                </div>
+                <div class="payment-method" data-method="net-banking">
+                  <i class="fa-solid fa-university"></i>
+                  Net Banking
+                </div>
+                <div class="payment-method" data-method="upi">
+                  <i class="fa-solid fa-mobile-alt"></i>
+                  UPI
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary prev-step" data-step="addons-summary">Previous: Add‑On Summary</button>
+                <button type="submit" class="btn btn-primary">Pay &amp; Continue</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guest Addition Form -->
+      <div class="form-step" id="guest-addition">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2>Guest Addition</h2>
+          </div>
+          <div class="card-body">
+            <form id="guest-addition-form">
+              <div class="form-group">
+                <button type="button" id="open-guest-modal-btn" class="btn btn-primary">
+                  <i class="fa-solid fa-plus"></i> Add New Guest
+                </button>
+              </div>
+              <div class="guest-list-container">
+                <table class="guest-table">
+                  <thead>
+                    <tr>
+                      <th data-full="Guest ID"><span>Guest ID</span></th>
+                      <th data-full="Name"><span>Name</span></th>
+                      <th data-full="Contact"><span>Contact</span></th>
+                      <th data-full="Email"><span>Email</span></th>
+                      <th data-full="Type"><span>Type</span></th>
+                      <th data-full="Max Companions"><span>Max Companions</span></th>
+                      <th data-full="Invite Send"><span>Invite Send</span></th>
+                      <th data-full="Accept Status"><span>Accept Status</span></th>
+                      <th data-full="Members"><span>Members</span></th>
+                      <th data-full="Decline Reason"><span>Decline Reason</span></th>
+                      <th data-full="Delete Guest"><span>Delete Guest</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="guest-list">
+                    <tr class="no-guests"><td colspan="11" style="text-align: center;">No guests added yet</td></tr>
+                  </tbody>
+                </tbody>
+                </table>
+              </div>
+              <div class="guest-progress">
+                <div class="guest-progress-label">Invited <span id="current-guests">0</span> of <span id="max-guests">{{ max_guests }}</span></div>
+                <div class="progress-container">
+                    <div id="guest-progress-bar" class="progress-bar-inner"></div>
+                </div>
+              </div>
+              <div class="form-group">
+                <button type="button" id="send-all-invitations-btn" class="btn btn-success">Send Invitation To All</button>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary prev-step" data-step="payment">Previous: Payment</button>
+                <button type="submit" class="btn btn-primary">Next: Dashboard</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+       
+      <!-- Dashboard Overview -->
+      
+
+      <div class="form-step" id="dashboard">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2 id="dashboard-event-name">Welcome, {{ event_registration.event_name }}!</h2>
+          </div>
+          <div class="card-body">
+            <div class="dashboard-header">
+              <div class="dashboard-title">
+                <h1 id="dashboard-overview-title">Event Overview</h1>
+                <p>Real-time event statistics</p>
+              </div>
+              <div class="dashboard-actions">
+                <button id="goto-guest-addition-btn" class="btn btn-primary">Add More Guests</button>
+              </div>
+            </div>
+            <div class="dashboard-charts">
+              <!-- Invitation Tracking (always visible) -->
+              <div class="chart-container">
+                <canvas id="invitationChart"></canvas>
+                <div class="chart-label">Invitation Tracking</div>
+              </div>
+
+              <!-- Food Plate Tracking (locked if not event day) -->
+              <div class="chart-container">
+                  {% if is_event_day %}
+                  <!-- renamed to platesChart -->
+                  <canvas id="platesChart"></canvas>
+                  {% else %}
+                  <div class="lock-overlay">
+                     <i class="fa-solid fa-lock fa-2x"></i><br>
+                     Plates open on event day only
+                  </div>
+                  {% endif %}
+                  <div class="chart-label">Food Plate Tracking</div>
+              </div>
+
+              <!-- Guest Entry Tracking (locked if not event day) -->
+              <div class="chart-container">
+                {% if is_event_day %}
+                  <!-- renamed to entryChart -->
+                  <canvas id="entryChart"></canvas>
+                {% else %}
+                  <div class="lock-overlay">
+                    <i class="fa-solid fa-lock fa-2x"></i><br>
+                    Entry opens on event day only
+                  </div>
+                {% endif %}
+                <div class="chart-label">Guest Entry Tracking</div>
+              </div>
+            </div>
+
+            <!-- Timeline: give it an ID so JS can populate it -->
+            <div class="timeline" id="eventTimeline"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Funds Page -->
+      <div class="form-step" id="funds">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2>Monetary Gifts</h2>
+          </div>
+          <div class="card-body">
+            <form id="funds-form">
+              <div class="form-group">
+                <label for="gift-guest-name">Guest Name</label>
+                <input type="text" id="gift-guest-name" class="form-control" placeholder="Enter guest name" required>
+              </div>
+              <div class="form-group">
+                <label for="gift-amount">Amount (₹)</label>
+                <input type="number" id="gift-amount" class="form-control" placeholder="Enter amount" required min="1">
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Add Gift</button>
+              </div>
+            </form>
+            <div class="funds-summary">
+              <h3>Total Funds Collected: <span id="total-funds">₹{{ total_funds|floatformat:2 }}</span></h3>
+            </div>
+            <div class="funds-list">
+              <h3>Gifts Received</h3>
+              <table class="guest-table">
+                <thead>
+                  <tr>
+                    <th>Guest Name</th>
+                    <th>Amount (₹)</th>
+                  </tr>
+                </thead>
+                <tbody id="funds-list-body">
+                  {% if money_gifts %}
+                    {% for g in money_gifts %}
+                      <tr>
+                        <td>{{ g.guest_name }}</td>
+                        <td>₹{{ g.amount|floatformat:2 }}</td>
+                      </tr>
+                    {% endfor %}
+                  {% else %}
+                  <tr class="no-funds">
+                    <td colspan="2" style="text-align: center;">No gifts received yet</td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Guest Modal -->
+  <div class="modal" id="guest-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Guest Details</h3>
+        <button type="button" class="modal-close" id="close-guest-modal">&times;</button>
+      </div>
+      <form id="guest-form">
+        <div class="form-group">
+          <label for="guest-name">Guest Name</label>
+          <input type="text" id="guest-name" name="guest_name" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="guest-contact">Contact Number</label>
+          <input type="text" id="guest-contact" name="guest_contact" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="guest-email">Email</label>
+          <input type="email" id="guest-email" name="guest_email" class="form-control" required>
+
+        </div>
+        <div class="form-group">
+          <div class="form-group">
+            <label for="guest-type">Guest Type</label>
+            <select id="guest-type" name="guest_type" class="form-select" required>
+              <option value="">Select Guest Type</option>
+              <option value="Normal">Normal</option>
+              <option value="VIP">VIP</option>
+              <option value="VVIP">VVIP</option>
+            </select>
+          </div>
+          <div class="form-group" id="max-companions-group">
+            <label for="max-companions">Max Accompanying Members (Including Self)</label>
+            <input type="number" id="max-companions" name="max_companions" class="form-control" min="1" max="10" required />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-guest">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Guest</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Include Chart.js and dashboard.js -->
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'js/dashboard.js' %}"></script>
+  <script>
+    const chartData     = JSON.parse(document.getElementById('chart-data').textContent);
+    const timelineSteps = JSON.parse(document.getElementById('timeline-data').textContent);
+    const isEventDay    = {{ is_event_day|yesno:"true,false" }};
+  </script>
+</body>
+</html>

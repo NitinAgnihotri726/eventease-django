@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventEase Premium Invitation</title>
+    <style>
+        /* Base styles and resets */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', 'Helvetica', 'Arial', sans-serif;
+            margin: 0;
+            padding: 30px 0;
+            background-color: #f5f5f7;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+        
+        /* Main container */
+        .container {
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
+            background: #1a1a2e;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        /* Colored border elements */
+        .border-accent {
+            height: 5px;
+            background: linear-gradient(90deg, #4568DC, #7B61FF, #B24592);
+            position: relative;
+        }
+        
+        /* Header section */
+        .header {
+            background: linear-gradient(135deg, #4568DC 0%, #7B61FF 50%, #B24592 100%);
+            padding: 3.5rem 2rem 3rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.05);
+            background-image: url('https://i.ibb.co/KDmqrqL/email-pattern.png');
+            background-size: 100px 100px;
+            opacity: 0.4;
+        }
+        
+        /* Logo styling */
+        .logo {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .logo-circle {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: inline-block;
+            text-align: center;
+            line-height: 90px;
+            margin: 0 auto;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .logo-text {
+            font-family: 'Playfair Display', 'Georgia', serif;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+        
+        /* Titles and subtitles */
+        .invitation-title {
+            font-family: 'Playfair Display', 'Georgia', serif;
+            color: white;
+            font-size: 42px;
+            font-weight: bold;
+            text-transform: none;
+            letter-spacing: 1px;
+            margin: 1.5rem 0 0.8rem;
+            position: relative;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 17px;
+            font-weight: normal;
+            letter-spacing: 0.8px;
+            position: relative;
+            max-width: 80%;
+            margin: 0 auto;
+            font-style: italic;
+        }
+        
+        /* Content area */
+        .content {
+            padding: 3rem 2.5rem;
+            text-align: center;
+            position: relative;
+            background-color: #16213e;
+        }
+        
+        .message {
+            font-size: 17px;
+            line-height: 1.8;
+            margin: 1.8rem 0;
+            color: #e2e8f0;
+            font-weight: 300;
+        }
+        
+        .message strong {
+            font-weight: 600;
+            color: #ffffff;
+        }
+        
+        /* Divider styling */
+        .divider {
+            height: 2px;
+            width: 100px;
+            background: linear-gradient(90deg, transparent, #7B61FF, transparent);
+            margin: 2.5rem auto;
+            border-radius: 2px;
+            position: relative;
+        }
+        
+        .divider-star {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #16213e;
+            padding: 0 15px;
+            color: #7B61FF;
+            font-size: 14px;
+        }
+        
+        /* Event details styling */
+        .event-details {
+            margin: 2.5rem 0;
+            text-align: center;
+        }
+        
+        .detail-row {
+            display: block;
+            text-align: left;
+            margin: 1.8rem 0;
+            padding: 1rem 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .detail-table td {
+            vertical-align: middle;
+        }
+        
+        .detail-icon {
+            width: 55px;
+            height: 55px;
+            background: rgba(123, 97, 255, 0.15);
+            border-radius: 50%;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 22px;
+            border: 1px solid rgba(123, 97, 255, 0.3);
+            display: inline-block;
+            line-height: 55px;
+        }
+        
+        .detail-text {
+            padding-left: 18px;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: #a0aec0;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+        
+        .detail-value {
+            font-size: 18px;
+            font-weight: 500;
+            color: #f8fafc;
+            letter-spacing: 0.3px;
+        }
+        
+        /* CTA Button */
+        .cta-button {
+            display: inline-block;
+            margin: 2.5rem 0;
+            padding: 16px 38px;
+            background: linear-gradient(135deg, #4568DC 0%, #7B61FF 50%, #B24592 100%);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 50px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+        
+        /* Guest info box */
+        .guest-info {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 2rem auto;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .guest-info p {
+            font-size: 15px;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        
+        .guest-info strong {
+            color: #f8fafc;
+            font-weight: 600;
+        }
+        
+        /* Footer section */
+        .footer {
+            background: #0f172a;
+            padding: 3rem 1.5rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .footer-border {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            margin-bottom: 30px;
+        }
+        
+        .company-name {
+            font-family: 'Playfair Display', 'Georgia', serif;
+            font-size: 32px;
+            font-weight: bold;
+            color: #7B61FF;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        
+        .company-slogan {
+            color: #94a3b8;
+            font-size: 15px;
+            font-weight: normal;
+            letter-spacing: 0.8px;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .social-icons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .social-icon {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            text-align: center;
+            margin: 0 8px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        /* Media Queries for better responsiveness */
+        @media only screen and (max-width: 680px) {
+            body {
+                padding: 15px 0;
+            }
+            
+            .container {
+                border-radius: 12px;
+                width: 90%;
+            }
+            
+            .header {
+                padding: 2.5rem 1rem;
+            }
+            
+            .invitation-title {
+                font-size: 36px;
+            }
+            
+            .logo-circle {
+                width: 80px;
+                height: 80px;
+                line-height: 80px;
+            }
+            
+            .logo-text {
+                font-size: 26px;
+            }
+            
+            .content {
+                padding: 2rem 1.5rem;
+            }
+            
+            .detail-row {
+                padding: 0.8rem;
+            }
+            
+            .detail-icon {
+                width: 45px;
+                height: 45px;
+                line-height: 45px;
+                font-size: 20px;
+            }
+            
+            .detail-value {
+                font-size: 16px;
+            }
+            
+            .cta-button {
+                padding: 14px 30px;
+                font-size: 15px;
+                margin: 2rem 0;
+            }
+            
+            .guest-info {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Glowing accents -->
+        <div class="glow-accent glow-top-right"></div>
+        <div class="glow-accent glow-bottom-left"></div>
+        
+        <!-- Header Section -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-circle">
+                    <div class="logo-text">EE</div>
+                </div>
+            </div>
+            
+            <h1 class="invitation-title">You're Invited</h1>
+            <p class="subtitle">Join us for an exceptional experience that you won't forget</p>
+        </div>
+        
+        <!-- Content Section -->
+        <div class="content">
+            <div class="message">
+                <p>Dear <strong>{{ guest.guest_name }}</strong>,</p>
+                <p>We are delighted to extend this exclusive invitation to you for our upcoming event. Your presence would add exceptional value to this gathering, and we look forward to sharing this remarkable experience with you.</p>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="event-details">
+                <div class="detail-row">
+                    <div class="detail-icon">📅</div>
+                    <div class="detail-text">
+                        <div class="detail-label">EVENT</div>
+                        <div class="detail-value">{{ event.event_name }}</div>
+                    </div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-icon">👤</div>
+                    <div class="detail-text">
+                        <div class="detail-label">HOSTED BY</div>
+                        <div class="detail-value">{{ event.client.name }}</div>
+                    </div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-icon">🗓️</div>
+                    <div class="detail-text">
+                        <div class="detail-label">DATE & TIME</div>
+                        <div class="detail-value">{{ event.event_date|date:"F j, Y" }} | {{ event.event_start_time }} - {{ event.event_end_time }}</div>
+                    </div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-icon">📍</div>
+                    <div class="detail-text">
+                        <div class="detail-label">VENUE</div>
+                        <div class="detail-value">{{ event.event_location }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <p style="color: #e2e8f0;">We sincerely hope you can join us for this special occasion.</p>
+            <p style="color: #e2e8f0; margin-top: 10px;">Please confirm your attendance by selecting the button below:</p>
+            
+            <a href="http://127.0.0.1:8000/invitation/{{ guest.guest_id }}" class="cta-button">
+                Respond Now
+            </a>
+            
+            <div class="guest-info">
+                <p>You are invited as a <strong>{{ guest.guest_type }}</strong> guest</p>
+                <p>You may bring up to <strong>{{ guest.max_companions|add:"-1" }}</strong> companion(s) with you</p>
+            </div>
+        </div>
+        
+        <!-- Footer Section -->
+        <div class="footer">
+            <div class="company-name">EventEase</div>
+            <div class="company-slogan">Making special moments effortless</div>
+            
+            <div class="social-icons">
+                <a href="#" class="social-icon">ƒ</a>
+                <a href="#" class="social-icon">𝕏</a>
+                <a href="#" class="social-icon">Ⓘ</a>
+            </div>
+            
+            <div class="footer-line"></div>
+        </div>
+    </div>
+</body>
+</html>

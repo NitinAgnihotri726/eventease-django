@@ -1,0 +1,185 @@
+{% load static %} 
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: sans-serif; margin: 1cm; }
+    h1, h2, h3 { color: #4361ee; margin-bottom: 0.2em; }
+    .section { margin-bottom: 1.5em; }
+    table { width: 100%; border-collapse: collapse; margin-top: 0.5em; table-layout: fixed; }
+    th, td { border: 1px solid #ccc; padding: 4px; font-size: 0.9em; word-wrap: break-word; }
+    th { background: #f0f0f0; }
+    .small { font-size: 0.8em; color: #666; }
+    col.guest-id { width: 15%; }
+    col.name { width: 25%; }
+    col.type { width: 15%; }
+    col.category { width: 15%; }
+    col.primary { width: 15%; }
+    col.checkin { width: 15%; }
+  </style>
+  <title>Report – {{ event.event_name }}</title>
+</head>
+<body>
+
+  <h1>Event Report: {{ event.event_name }}</h1>
+  <p class="small">
+    Client: {{ event.client.name }} –
+    Date: {{ event.event_date }} –
+    Location: {{ event.event_location }} –
+    Size: {{ event.event_size }} guests
+  </p>
+
+  <div class="section">
+    <h2>Event Packages</h2>
+    <p>Event Package: {{ event.event_package_name }} (Rs.{{ event.event_package_price }})</p>
+    <p>Vendor Package: {{ event.vendor_package_name }} (Rs.{{ event.vendor_package_price }})</p>
+  </div>
+
+  <div class="section">
+    <h2>Guest Attendance</h2>
+    <h3>Checked–In Guests ({{ attended_guests|length }})</h3>
+    <table>
+      <colgroup>
+        <col class="guest-id" />
+        <col class="name" />
+        <col class="type" />
+        <col class="category" />
+        <col class="primary" />
+        <col class="checkin" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Guest ID</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>Primary Guest</th>
+          <th>Check–In Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in attended_guests %}
+        <tr>
+          <td>{{ g.guest_id }}</td>
+          <td>{{ g.guest_name }}</td>
+          <td>{{ g.guest_type }}</td>
+          <td>{{ g.guest_category }}</td>
+          <td>{{ g.primary_name }}</td>
+          <td>{{ g.checkin_time|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
+        {% if attended_guests|length == 0 %}
+        <tr><td colspan="6" style="text-align:center">No guests have checked in.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+
+    <h3>Invited but Not Checked–In ({{ not_attended_guests|length }})</h3>
+    <table>
+      <colgroup>
+        <col class="guest-id"/><col class="name"/><col class="type"/>
+        <col class="category"/><col class="primary"/><col class="status"/>
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Guest ID</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>Primary Guest</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in not_attended_guests %}
+        <tr>
+          <td>{{ g.guest_id }}</td>
+          <td>{{ g.guest_name }}</td>
+          <td>{{ g.guest_type }}</td>
+          <td>{{ g.guest_category }}</td>
+          <td>{% if g.primary_guest %}{{ g.primary_guest.guest_name }}{% else %}-{% endif %}</td>
+          <td>
+            {% if g.invitation_accept_status == 1 %}Accepted
+            {% elif g.invitation_accept_status == -1 %}Declined
+            {% else %}Pending{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        {% if not_attended_guests|length == 0 %}
+        <tr><td colspan="6" style="text-align:center">All invited guests have checked in.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Fund Collection</h2>
+    <p>Total Funds: Rs.{{ total_funds }}</p>
+    <table>
+      <thead>
+        <tr><th>Guest Name</th><th>Amount (Rs.)</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        {% for gift in gifts %}
+        <tr>
+          <td>{{ gift.guest_name }}</td>
+          <td>{{ gift.amount }}</td>
+          <td>{{ gift.created_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
+        {% if gifts|length == 0 %}
+        <tr><td colspan="3" style="text-align:center">No gifts recorded.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Food Plates</h2>
+    <p>Served: {{ plates_served }}</p>
+    <p>Remaining: {{ plates_remaining }}</p>
+  </div>
+
+  <div class="section">
+    <h2>Event Timeline</h2>
+    <table>
+      <thead>
+        <tr><th>Milestone</th><th>Time</th><th>Completed?</th></tr>
+      </thead>
+      <tbody>
+        {% for step in timeline %}
+        <tr>
+          <td>{{ step.name }}</td>
+          <td>{{ step.time }}</td>
+          <td>{% if step.done %}✔{% else %}✘{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Vendors</h2>
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Type</th><th>Salary (Rs.)</th></tr>
+      </thead>
+      <tbody>
+        {% for v in confirmed_vendors %}
+        <tr>
+          <td>{{ v.name }}</td>
+          <td>{{ v.vendor_type }}</td>
+          <td>{{ v.salary }}</td>
+        </tr>
+        {% endfor %}
+        {% if confirmed_vendors|length == 0 %}
+        <tr><td colspan="3" style="text-align:center">No vendors confirmed.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div class="footer"><h3>Thank you for using EventEase!</h3></div>
+  <p class="small">Report generated on {{ now|date:"Y-m-d H:i" }}</p>
+</body>
+</html>

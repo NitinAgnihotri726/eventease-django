@@ -1,0 +1,432 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventEase - Transforming Event Management</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="{% url 'home' %}">
+                    <span>Event</span>Ease
+                </a>
+            </div>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-list">
+                    <li><a href="{% url 'home' %}" class="active">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#stories">Success Stories</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li class="auth-buttons">
+                        <a href="{% url 'signin' %}" class="btn-login">Login</a>
+                        <a href="{% url 'signup' %}" class="btn-signup">Sign Up</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section with Slideshow -->
+    <section class="hero-section">
+        <div class="slideshow-container">
+            <div class="slide active" style="background-image: url('{% static 'images/slide1.jpg' %}');">
+                <div class="slide-content">
+                    <h1 data-aos="fade-up" data-aos-delay="200">Transform Your Events Management Experience</h1>
+                    <p data-aos="fade-up" data-aos-delay="400">Effortless planning, flawless execution, and real-time insights for your special occasions</p>
+                    <a href="#services" class="btn-primary" data-aos="fade-up" data-aos-delay="600">Explore Our Services</a>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('{% static 'images/slide2.jpg' %}');">
+                <div class="slide-content">
+                    <h1 data-aos="fade-up" data-aos-delay="200">Seamless Guest Management with QR Technology</h1>
+                    <p data-aos="fade-up" data-aos-delay="400">Eliminate queues and enhance security with our QR code-based check-in system</p>
+                    <a href="#qr-features" class="btn-primary" data-aos="fade-up" data-aos-delay="600">Learn More</a>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('{% static 'images/slide3.jpg' %}');">
+                <div class="slide-content">
+                    <h1 data-aos="fade-up" data-aos-delay="200">Real-Time Analytics for Perfect Events</h1>
+                    <p data-aos="fade-up" data-aos-delay="400">Monitor attendance, food consumption, and vendor performance in real-time</p>
+                    <a href="#analytics" class="btn-primary" data-aos="fade-up" data-aos-delay="600">Discover How</a>
+                </div>
+            </div>
+            <div class="slide-controls">
+                <div class="slide-dots">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>About EventEase</h2>
+                <div class="underline"></div>
+            </div>
+            <div class="about-content">
+                <div class="about-image" data-aos="fade-right">
+                    <img src="{% static 'images/about-image.jpg' %}" alt="About EventEase">
+                </div>
+                <div class="about-text" data-aos="fade-left">
+                    <h3>Transforming Social and Society Events with Automation</h3>
+                    <p>EventEase is a unified, automated event management system designed to address the inefficiencies of traditional event planning and execution. From managing guest registrations and coordinating vendors to optimizing resources and analyzing post-event data, EventEase streamlines every aspect of event management through innovative technologies.</p>
+                    <p>The system leverages QR code-based guest management, centralized vendor coordination, real-time resource tracking, and predictive analytics to reduce manual errors, enhance scalability, and minimize resource wastage.</p>
+                    <div class="about-stats">
+                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
+                            <span class="stat-count">500+</span>
+                            <span class="stat-label">Events Managed</span>
+                        </div>
+                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="400">
+                            <span class="stat-count">98%</span>
+                            <span class="stat-label">Client Satisfaction</span>
+                        </div>
+                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="600">
+                            <span class="stat-count">30%</span>
+                            <span class="stat-label">Resource Optimization</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Key Features</h2>
+                <div class="underline"></div>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100" id="qr-features">
+                    <div class="feature-icon">
+                        <img src="{% static 'images/icon-qr.png' %}" alt="QR Code Management">
+                    </div>
+                    <h3>QR Code-Based Guest Management</h3>
+                    <p>Eliminate long queues with quick and secure check-ins. Track attendance in real-time and enhance security.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">
+                        <img src="{% static 'images/icon-vendor.png' %}" alt="Vendor Management">
+                    </div>
+                    <h3>Centralized Vendor Coordination</h3>
+                    <p>Manage all vendors on a single platform with real-time status updates and seamless communication.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="500" id="analytics">
+                    <div class="feature-icon">
+                        <img src="{% static 'images/icon-analytics.png' %}" alt="Analytics">
+                    </div>
+                    <h3>Real-Time Analytics & Insights</h3>
+                    <p>Monitor attendance, food consumption, and vendor performance with comprehensive analytics.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="700">
+                    <div class="feature-icon">
+                        <img src="{% static 'images/icon-payment.png' %}" alt="Payment Management">
+                    </div>
+                    <h3>Secure Payment Management</h3>
+                    <p>Track expenses, manage budgets, and process payments securely within the platform.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Our Services</h2>
+                <div class="underline"></div>
+                <p>EventEase provides comprehensive services for various types of social and society events</p>
+            </div>
+            <div class="services-container">
+                <div class="service-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-icon">
+                        <i class="fas fa-ring"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Wedding Management</h3>
+                        <p>Comprehensive wedding planning with guest management, vendor coordination, and real-time monitoring to make your special day perfect.</p>
+                    </div>
+                </div>
+                <div class="service-item" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-icon">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Birthday Celebrations</h3>
+                        <p>Make birthdays special with our streamlined planning tools, invitation management, and entertainment coordination.</p>
+                    </div>
+                </div>
+                <div class="service-item" data-aos="fade-up" data-aos-delay="500">
+                    <div class="service-icon">
+                        <i class="fas fa-glass-cheers"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Anniversary Parties</h3>
+                        <p>Create memorable anniversary celebrations with our comprehensive event management platform.</p>
+                    </div>
+                </div>
+                <div class="service-item" data-aos="fade-up" data-aos-delay="700">
+                    <div class="service-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Corporate Events</h3>
+                        <p>Streamline corporate gatherings with our professional event management tools and analytics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Stories Section -->
+    <section id="stories" class="stories-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Success Stories</h2>
+                <div class="underline"></div>
+                <p>See how EventEase has transformed events for our clients</p>
+            </div>
+            <div class="stories-slider">
+                <div class="story-slide active" data-aos="fade-up">
+                    <div class="story-image">
+                        <img src="{% static 'images/story1.jpg' %}" alt="Wedding Story">
+                    </div>
+                    <div class="story-content">
+                        <h3>Raj & Priya's Wedding</h3>
+                        <p>"EventEase made our wedding day truly special. The QR code check-in eliminated long queues, and the real-time tracking helped us manage our 500+ guests effortlessly. The vendor coordination was flawless!"</p>
+                        <div class="story-client">- Raj Sharma, Delhi</div>
+                    </div>
+                </div>
+                <div class="story-slide" data-aos="fade-up">
+                    <div class="story-image">
+                        <img src="{% static 'images/story2.jpg' %}" alt="Corporate Event">
+                    </div>
+                    <div class="story-content">
+                        <h3>TechCorp Annual Conference</h3>
+                        <p>"Our annual conference was a success thanks to EventEase. The platform helped us manage 200+ attendees, multiple vendors, and complex scheduling with ease. The analytics provided valuable insights for future events."</p>
+                        <div class="story-client">- Anand Mehta, TechCorp CEO</div>
+                    </div>
+                </div>
+                <div class="story-slide" data-aos="fade-up">
+                    <div class="story-image">
+                        <img src="{% static 'images/story3.jpg' %}" alt="Birthday Party">
+                    </div>
+                    <div class="story-content">
+                        <h3>Aarav's 5th Birthday</h3>
+                        <p>"Planning my son's birthday was a breeze with EventEase. The platform helped us manage invitations, track RSVPs, and coordinate with vendors. The resource management feature ensured we had the right amount of food and party favors."</p>
+                        <div class="story-client">- Neha Patel, Mumbai</div>
+                    </div>
+                </div>
+            </div>
+            <div class="story-controls">
+                <span class="story-dot active" data-story="0"></span>
+                <span class="story-dot" data-story="1"></span>
+                <span class="story-dot" data-story="2"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Enquiry Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="contact-wrapper">
+                <div class="contact-form-container" data-aos="fade-right">
+                    <div class="section-header light">
+                        <h2>Send an Enquiry</h2>
+                        <div class="underline"></div>
+                        <p>We'd love to hear from you! Fill out the form below to get in touch.</p>
+                    </div>
+                    <form class="contact-form" id="enquiryForm">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="phone" name="phone" placeholder="Your Phone" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">Send Message</button>
+                    </form>
+                </div>
+                <div class="contact-info" data-aos="fade-left">
+                    <h3>Contact Information</h3>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>123, Delhi, India</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <p><a href="tel:+911234567890">+91 1234 567 890</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <p><a href="mailto:info@eventease.com">makeeventease@gmail.com</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Frequently Asked Questions</h2>
+                <div class="underline"></div>
+                <p>Do you have any other questions? Please check these FAQs.</p>
+            </div>
+            <div class="faq-container" data-aos="fade-up">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How does the QR code check-in system work?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our QR code system generates unique codes for each guest. When they arrive at the event, they simply show their code (on their phone or printed) to be scanned. This automatically marks their attendance in the system and provides real-time updates to the event organizer.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can EventEase handle events of all sizes?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! EventEase is designed to be scalable and can handle events of all sizes, from intimate gatherings to large-scale celebrations with hundreds of guests. Our system adjusts automatically to your event requirements.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How does the vendor management system work?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>EventEase provides a centralized platform for all your vendors. You can add vendors to your event, assign them tasks, set deadlines, and track their progress. Vendors can also access the system to update their status and communicate with you directly.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What kind of analytics does EventEase provide?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>EventEase offers comprehensive analytics including attendance metrics, resource utilization, vendor performance, and budget tracking. You can view this data in real-time during the event and access detailed reports afterward to help plan future events.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Is my data secure with EventEase?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! We take data security very seriously. All your event and guest information is encrypted and stored securely. We implement industry-standard security protocols to ensure your data remains protected at all times.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="enquiry-cta" data-aos="zoom-in">
+                <h3>Have more questions?</h3>
+                <a href="tel:+919891367726" class="btn-call">Call Us Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <span>Event</span>Ease
+                    </div>
+                    <p>Transforming event management with automation and real-time insights.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#faq">FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Our Services</h3>
+                    <ul class="footer-links">
+                        <li><a href="#services">Wedding Management</a></li>
+                        <li><a href="#services">Birthday Celebrations</a></li>
+                        <li><a href="#services">Anniversary Parties</a></li>
+                        <li><a href="#services">Corporate Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <div class="footer-contact">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Event Street, Delhi, India</p>
+                        <p><i class="fas fa-phone"></i> <a href="tel:+911234567890">+91 1234 567 890</a></p>
+                        <p><i class="fas fa-envelope"></i> <a href="mailto:info@eventease.com">info@eventease.com</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 EventEase. All Rights Reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    

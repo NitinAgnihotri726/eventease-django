@@ -1,0 +1,497 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Event Pass</title>
+  <style>
+    /* Reset for email clients */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Body styling */
+    body {
+      font-family: 'Arial', 'Helvetica', sans-serif; /* Web-safe fonts for email */
+      background-color: #0a0a0a;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      line-height: 1.5;
+    }
+    
+    /* Main container */
+    .passes-container {
+      width: 100%;
+      max-width: 600px; /* Common email width */
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+    
+    /* Pass container */
+    .invitation-container {
+      width: 100%;
+      max-width: 400px; /* Good size for mobile */
+      margin: 0 auto;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      background-color: #1a1a2e; /* Fallback color */
+    }
+    
+    /* Inner pass styling */
+    .pass-inner {
+      width: 100%;
+      padding: 20px;
+      position: relative;
+    }
+    
+    /* Header styling */
+    .header {
+      display: table;
+      width: 100%;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      margin-bottom: 20px;
+    }
+    
+    .logo {
+      display: table-cell;
+      vertical-align: middle;
+      width: 70%;
+      font-weight: 700;
+      font-size: 16px;
+      color: #e94560;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+    
+    .logo-icon {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      background-color: #e94560;
+      border-radius: 50%;
+      margin-right: 10px;
+      text-align: center;
+      line-height: 32px;
+      font-weight: bold;
+      color: white;
+    }
+    
+    .event-badge {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: right;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background-color: rgba(0, 123, 255, 0.2); /* Default normal badge */
+      color: #0d6efd;
+      border: 1px solid rgba(13, 110, 253, 0.3);
+    }
+    
+    /* Badge variations */
+    .badge-normal {
+      background-color: rgba(0, 123, 255, 0.2);
+      color: #0d6efd;
+      border-color: rgba(13, 110, 253, 0.3);
+    }
+    
+    .badge-family {
+      background-color: rgba(25, 135, 84, 0.2);
+      color: #20c997;
+      border-color: rgba(32, 201, 151, 0.3);
+    }
+    
+    .badge-vip {
+      background-color: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+      border-color: rgba(255, 193, 7, 0.3);
+    }
+    
+    .badge-vvip {
+      background-color: rgba(220, 53, 69, 0.2);
+      color: #e94560;
+      border-color: rgba(233, 69, 96, 0.3);
+    }
+    
+    /* Content styling */
+    .content {
+      padding: 10px 0;
+      margin-bottom: 20px;
+    }
+    
+    .event-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #e94560; /* Fallback color for email clients that don't support gradients */
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+    
+    .organizer {
+      font-size: 14px;
+      color: #d3d3d3;
+      margin-bottom: 20px;
+      position: relative;
+      padding-left: 18px;
+    }
+    
+    .organizer::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 10px;
+      height: 2px;
+      background: #e94560;
+      transform: translateY(-50%);
+    }
+    
+    /* Guest info styling */
+    .guest-info {
+      margin-bottom: 20px;
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .guest-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #a5a5a5;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    
+    .guest-name {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+    }
+    
+    .guest-type {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    
+    /* Guest type variations */
+    .type-normal {
+      background-color: rgba(0, 123, 255, 0.15);
+      color: #0d6efd;
+      border: 1px solid rgba(13, 110, 253, 0.3);
+    }
+    
+    .type-family {
+      background-color: rgba(25, 135, 84, 0.15);
+      color: #20c997;
+      border: 1px solid rgba(32, 201, 151, 0.3);
+    }
+    
+    .type-vip {
+      background-color: rgba(255, 193, 7, 0.15);
+      color: #ffc107;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+    
+    .type-vvip {
+      background-color: rgba(220, 53, 69, 0.15);
+      color: #e94560;
+      border: 1px solid rgba(233, 69, 96, 0.3);
+    }
+    
+    .primary-guest {
+      font-size: 12px;
+      color: #d3d3d3;
+      margin-top: 4px;
+    }
+    
+    /* QR Section */
+    .qr-section {
+      width: 100%;
+      margin-bottom: 20px;
+      overflow: hidden; /* Clear floats */
+    }
+    
+    .qr-code {
+      float: left;
+      width: 100px;
+      height: 100px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 8px;
+      margin-right: 15px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .qr-code img {
+      width: 84px;
+      height: 84px;
+      display: block;
+    }
+    
+    .welcome-message {
+      overflow: hidden; /* Make text wrap around QR code */
+      font-size: 14px;
+      line-height: 1.5;
+      color: #e0e0e0;
+    }
+    
+    /* Event details */
+    .event-details {
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+    
+    .event-details-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .detail-column {
+      width: 33.33%;
+      padding: 0 8px;
+      vertical-align: top;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .detail-column:last-child {
+      border-right: none;
+    }
+    
+    .detail-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #a5a5a5;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    
+    .detail-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    
+    .detail-icon {
+      display: inline-block;
+      margin-right: 5px;
+      opacity: 0.8;
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .terms {
+      margin-bottom: 8px;
+    }
+    
+    .unique-id {
+      font-size: 10px;
+      text-align: right;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 0.5px;
+    }
+    
+    /* Status ribbon for VVIP */
+    .status-ribbon {
+      position: absolute;
+      top: 20px;
+      right: -35px;
+      background-color: #e94560;
+      color: white;
+      padding: 5px 40px;
+      font-size: 12px;
+      font-weight: 600;
+      transform: rotate(45deg);
+      z-index: 10;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    
+    .status-ribbon.vip { background-color: #ffc107; }
+    .status-ribbon.vvip { background-color: #e94560; }
+    .status-ribbon.normal { background-color: #0d6efd; }
+    
+    /* Pass type colors */
+    .normal-pass {
+      background-color: #1a1a2e;
+    }
+    
+    .family-pass {
+      background-color: #0d3240;
+    }
+    
+    .vip-pass {
+      background-color: #412d14;
+    }
+    
+    .vvip-pass {
+      background-color: #3a0a18;
+    }
+    
+    /* Mobile responsiveness */
+    @media screen and (max-width: 480px) {
+      .invitation-container {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 12px;
+      }
+      
+      .event-title {
+        font-size: 24px;
+      }
+      
+      .guest-name {
+        font-size: 18px;
+      }
+      
+      .qr-section {
+        display: block;
+      }
+      
+      .qr-code {
+        float: none;
+        margin: 0 auto 15px;
+      }
+      
+      .welcome-message {
+        text-align: center;
+      }
+      
+      .detail-column {
+        display: block;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 10px 0;
+      }
+      
+      .detail-column:last-child {
+        border-bottom: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="passes-container">
+    <div class="invitation-container {{ guest.guest_type|lower }}-pass">
+      {% if guest.guest_type == 'VVIP' or guest.guest_type == 'VIP' %}
+      <div class="status-ribbon {{ guest.guest_type|lower }}">{{ guest.guest_type }}</div>
+      {% endif %}
+      
+      <div class="pass-inner">
+        <!-- Header -->
+        <div class="header">
+          <div class="logo">
+            <span class="logo-icon">E</span>
+            EventEase
+          </div>
+          <div class="event-badge badge-{{ guest.guest_type|lower }}">
+            {{ guest.guest_type }}
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+          <h1 class="event-title">{{ event.event_name }}</h1>
+          <div class="organizer">
+            Organized by {{ event.client.name }}
+          </div>
+
+          <!-- Guest info -->
+         <div class="guest-info">
+            <div class="guest-label">Guest Information</div>
+            <div class="guest-name">{{ guest.guest_name }}</div>
+            <div class="guest-type type-{{ guest.guest_type|lower }}">
+              {% if guest.is_primary %}
+                Primary Guest
+              {% else %}
+                Family Member ({{ guest.primary_guest.guest_name }})
+              {% endif %}
+            </div>
+         </div>
+
+          <!-- QR code -->
+          <div class="qr-section">
+            <div class="qr-code">
+                 <div class="qr-code"><img src="cid:{{ qr_cid }}" alt="QR Code"></div>
+            </div>
+            <div class="welcome-message">
+              {% if guest.guest_type == 'VVIP' %}
+                VIP Access: Enjoy premium lounge access and priority services
+              {% elif guest.guest_type == 'VIP' %}
+                Priority Access: Special entry lane and reserved seating
+              {% else %}
+                Welcome to {{ event.event_name }}. Please present this pass for entry.
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Event details -->
+          <div class="event-details">
+            <table class="event-details-table" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="detail-column">
+                  <div class="detail-label"><span class="detail-icon">📅</span> Date</div>
+                  <div class="detail-value">{{ event.event_date|date:"F j, Y" }}</div>
+                </td>
+                <td class="detail-column">
+                  <div class="detail-label"><span class="detail-icon">⏰</span> Time</div>
+                  <div class="detail-value">{{ event.event_start_time|time:"g:i A" }} - {{ event.event_end_time|time:"g:i A" }}</div>
+                </td>
+                <td class="detail-column">
+                  <div class="detail-label"><span class="detail-icon">📍</span> Venue</div>
+                  <div class="detail-value">{{ event.event_location }}</div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          <div class="terms">
+            • Valid photo ID required for entry<br>
+            • Non-transferable • Subject to event terms
+          </div>
+          <div class="unique-id">
+            PASS ID: {{ guest.guest_id }}<br>
+            EVENT ID: {{ event.event_id }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

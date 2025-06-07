@@ -1,0 +1,567 @@
+{% load static %}
+{% now "Y-m-d" as today %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Executive Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/executive.css' %}" />
+</head>
+<body>
+
+  <!-- Main dashboard container -->
+  <div class="dashboard-container">
+    <!-- Sidebar navigation -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>Admin Dashboard</h2>
+        <button class="toggle-btn" id="toggleSidebar">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <div class="menu-item active" data-section="dashboard">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </div>
+      
+      <div class="menu-item" data-section="events" data-has-submenu="true">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Events</span>
+      </div>
+      <div class="sub-menu" id="eventsSubmenu">
+        <div class="sub-menu-item" data-section="events" data-tab="ongoing">
+          <i class="fas fa-play-circle"></i>
+          <span>Ongoing Events</span>
+        </div>
+        <div class="sub-menu-item" data-section="events" data-tab="upcoming">
+          <i class="fas fa-hourglass-start"></i>
+          <span>Upcoming Events</span>
+        </div>
+        <div class="sub-menu-item" data-section="events" data-tab="completed">
+          <i class="fas fa-check-circle"></i>
+          <span>Completed Events</span>
+        </div>
+      </div>
+      
+      <div class="menu-item" data-section="vendors" data-has-submenu="true">
+        <i class="fas fa-store"></i>
+        <span>Vendors</span>
+      </div>
+      <div class="sub-menu" id="vendorsSubmenu">
+        <div class="sub-menu-item" data-section="vendors" data-tab="authentication">
+          <i class="fas fa-user-check"></i>
+          <span>Vendor Authentication</span>
+        </div>
+        <div class="sub-menu-item" data-section="vendors" data-tab="registered">
+          <i class="fas fa-clipboard-list"></i>
+          <span>Registered Vendors</span>
+        </div>
+        <div class="sub-menu-item" data-section="vendors" data-tab="categories">
+          <i class="fas fa-tags"></i>
+          <span>Vendor Categories</span>
+        </div>
+      </div>
+      
+      <div class="menu-item" data-section="clients">
+        <i class="fas fa-users"></i>
+        <span>Clients</span>
+      </div>
+      
+      <div class="menu-item">
+        <a href="#" onclick="logout()">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Log‑out</span>
+        </a>
+      </div>
+    
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content" id="mainContent">
+      <!-- Header section -->
+      <div class="header">
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="user-profile">
+          <div class="user-avatar">
+            {{ executive_name|slice:":2"|upper }}
+          </div>
+          <div class="user-info">
+            <div class="user-name">{{ executive_name }}</div>
+            <div class="user-role">{{ executive_role }}</div>
+          </div>
+        </div>
+        
+      </div> 
+    
+
+      <!-- Dashboard section -->
+      <div id="dashboard" class="section active">
+        <div class="section-header">
+          <h2>Overview</h2>
+          <div class="date-range">
+            <button class="btn btn-primary">
+              <i class="fas fa-calendar"></i> May 2025
+            </button>
+          </div>
+        </div>
+        
+        <div class="card-grid">
+          
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Total Events</div>
+              <div class="card-icon bg-primary">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+            </div>
+            <div class="card-value">{{ total_events }}</div>
+            <div class="card-description">
+              {{ total_pct_change }}% increase from last month
+            </div>
+          </div>
+        
+          <!-- Ongoing Events -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Ongoing Events</div>
+              <div class="card-icon bg-success">
+                <i class="fas fa-play-circle"></i>
+              </div>
+            </div>
+            <div class="card-value">{{ ongoing_count }}</div>
+            <div class="card-description">
+              {{ starting_today }} starting today
+            </div>
+          </div>
+        
+          <!-- Registered Vendors -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Registered Vendors</div>
+              <div class="card-icon bg-warning">
+                <i class="fas fa-store"></i>
+              </div>
+            </div>
+            <div class="card-value">{{registered_vendors|length}}</div>
+            <div class="card-description">
+              {{ pending_vendor_apps|length }} pending approval
+            </div>
+          </div>
+        
+          <!-- Total Revenue -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Total Revenue</div>
+              <div class="card-icon bg-info">
+                <i class="fa-solid fa-indian-rupee-sign"></i>
+              </div>
+            </div>
+            <div class="card-value">₹{{ this_month_revenue|floatformat:0 }}</div>
+            <div class="card-description">
+              {{ revenue_pct_change }}% increase from last month
+            </div>
+          </div>
+        </div>  
+        <div class="section-header" style="margin-top: 30px;">
+          <h2>Recent Events</h2>
+          <button class="btn btn-primary" onclick="showSection('events')">View All</button>
+        </div>
+        
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Event ID</th><th>Name</th><th>Date</th>
+                <th>Venue</th><th>Guests</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ev in recent_events %}
+              <tr>
+                <td>{{ ev.event_id }}</td>
+                <td>{{ ev.event_name }}</td>
+                <td>{{ ev.event_date }}</td>
+                <td>{{ ev.event_location }}</td>
+                <td>{{ ev.event_size }}</td>
+                <td>
+                  {% if ev.event_date < today %}
+                    <span class="badge badge-success">Completed</span>
+                  {% elif ev.event_date == today %}
+                    <span class="badge badge-info">Ongoing</span>
+                  {% else %}
+                    <span class="badge badge-warning">Upcoming</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" style="text-align:center;">No events in next 2 days</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- End Dashboard section -->
+
+      <!-- Events Section -->
+      <div id="events" class="section">
+        <div class="section-header">
+          <h2>Event Management</h2>
+          <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search events...">
+            <div class="filter-dropdown">
+              <button class="btn btn-primary filter-btn">
+                <i class="fas fa-filter"></i> Filter
+              </button>
+              <div class="dropdown-content">
+                <div class="filter-group">
+                  <div class="filter-group-title">Event Status</div>
+                  <div class="filter-option">
+                    <input type="checkbox" id="filter-ongoing" class="filter-checkbox" checked>
+                    <label for="filter-ongoing" class="filter-label">Ongoing</label>
+                  </div>
+                  <div class="filter-option">
+                    <input type="checkbox" id="filter-upcoming" class="filter-checkbox" checked>
+                    <label for="filter-upcoming" class="filter-label">Upcoming</label>
+                  </div>
+                  <div class="filter-option">
+                    <input type="checkbox" id="filter-completed" class="filter-checkbox">
+                    <label for="filter-completed" class="filter-label">Completed</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-nav">
+          <div class="tab-item active" data-tab="ongoing">Ongoing Events</div>
+          <div class="tab-item" data-tab="upcoming">Upcoming Events</div>
+          <div class="tab-item" data-tab="completed">Completed Events</div>
+        </div>
+
+        <!-- Ongoing Events Tab -->
+        <div class="tab-content active" data-tab-content="ongoing">
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Event Name</th>
+                  <th>Date &amp; Time</th>
+                  <th>Venue</th>
+                  <th>Guests</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ongoing-events-body">
+                {% for ev in ongoing_events %}
+                <tr>
+                 <td>{{ ev.event_id }}</td>
+                 <td>{{ ev.event_name }}</td>
+                 <td>
+                  {{ ev.event_date }}<br>
+                  {{ ev.event_start_time|time:"h:i A" }} - {{ ev.event_end_time|time:"h:i A" }}
+                 </td>
+                  <td>{{ ev.event_location }}</td>
+                  <td>{{ ev.event_size }}</td>
+                  <td>
+                    <button><a href="{% url 'executive_event_detail' ev.event_id %}"class="btn btn-sm btn-primary">View</a></button>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center">No ongoing events</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Upcoming Events Tab -->
+        <div class="tab-content" data-tab-content="upcoming">
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Event Name</th>
+                  <th>Date &amp; Time</th>
+                  <th>Venue</th>
+                  <th>Guests</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="upcoming-events-body">
+                {% for ev in upcoming_events %}
+                 <tr>
+                 <td>{{ ev.event_id }}</td>
+                 <td>{{ ev.event_name }}</td>
+                 <td>
+                  {{ ev.event_date }}<br>
+                  {{ ev.event_start_time|time:"h:i A" }} - {{ ev.event_end_time|time:"h:i A" }}
+                 </td>
+                  <td>{{ ev.event_location }}</td>
+                  <td>{{ ev.event_size }}</td>
+                  <td>
+                    <button><a href="{% url 'executive_event_detail' ev.event_id %}"class="btn btn-sm btn-primary">View</a></button>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center">No upcoming events</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Completed Events Tab -->
+        <div class="tab-content" data-tab-content="completed">
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                {% for ev in completed_events %}
+                 <tr>
+                 <td>{{ ev.event_id }}</td>
+                 <td>{{ ev.event_name }}</td>
+                 <td>
+                  {{ ev.event_date }}<br>
+                  {{ ev.event_start_time|time:"h:i A" }} - {{ ev.event_end_time|time:"h:i A" }}
+                 </td>
+                  <td>{{ ev.event_location }}</td>
+                  <td>{{ ev.event_size }}</td>
+                  <td>
+                    <button><a href="{% url 'executive_event_detail' ev.event_id %}"class="btn btn-sm btn-primary">View</a></button>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center">No compelted events</td></tr>
+                {% endfor %}
+                </tr>
+              </thead>
+              <tbody id="completed-events-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- End Events Section -->
+
+      <!-- Vendors Section -->
+      <div id="vendors" class="section">
+        <div class="tab-nav">
+          <div class="tab-item active" data-tab="authentication">Vendor Authentication</div>
+          <div class="tab-item" data-tab="registered">Registered Vendors</div>
+          <div class="tab-item" data-tab="categories">Vendor Categories</div>
+        </div>
+
+        <div class="tab-content active" data-tab-content="authentication">
+          <div class="vendor-grid">
+            {% for v in pending_vendor_apps %}
+              <div class="vendor-card">
+                <div class="vendor-header">
+                  Vendor Application #{{ v.vendor_id }} <span class="notification-dot"></span>
+                </div>
+                <div class="vendor-content">
+                  <div class="vendor-info">
+                    <div class="vendor-info-item">
+                      <span class="vendor-label">Name:</span>
+                      <span class="vendor-value">{{ v.name }}</span>
+                    </div>
+                    <div class="vendor-info-item">
+                      <span class="vendor-label">Category:</span>
+                      <span class="vendor-value">{{ v.vendor_type }}</span>
+                    </div>
+                    <div class="vendor-info-item">
+                      <span class="vendor-label">Contact:</span>
+                      <span class="vendor-value">{{ v.phone }}</span>
+                    </div>
+                    <div class="vendor-info-item">
+                      <span class="vendor-label">Address:</span>
+                      <span class="vendor-value">{{ v.address }}</span>
+                    </div>
+                    <div class="vendor-info-item">
+                      <span class="vendor-label">ID Card:</span>
+                      <span class="vendor-value">
+                        {% if v.id_card %}
+                          <a href="{{ v.id_card.url }}" target="_blank">View</a>
+                        {% else %}
+                          Not provided
+                        {% endif %}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="vendor-actions">
+                    <button class="btn btn-success btn-sm" onclick="approveVendor('{{ v.vendor_id }}')">
+                      <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="rejectVendorPrompt('{{ v.vendor_id }}')">
+                      <i class="fas fa-times"></i> Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <p class="no-vendor-apps">No pending vendor applications.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Registered Vendors Tab -->
+        <div class="tab-content" data-tab-content="registered">
+          <div class="vendor-grid">
+            {% for v in registered_vendors %}
+              <div class="vendor-card">
+                <div class="vendor-header">
+                  #{{ v.vendor_id }} — {{ v.name }}
+                </div>
+                <div class="vendor-content">
+                  <div class="vendor-info">
+                    <div class="vendor-info-item">
+                      <span class="vendor-label">Category:</span>
+                      <span class="vendor-value">{{ v.vendor_type }}</span>
+                    </div>
+                    <div class="vendor-info-item">
+                      <span class="vendor-label">Contact:</span>
+                      <span class="vendor-value">{{ v.phone }}</span>
+                    </div>
+                    <div class="vendor-info-item">
+                      <span class="vendor-label">Address:</span>
+                      <span class="vendor-value">{{ v.address }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <p class="no-vendor-apps">No registered vendors.</p>
+            {% endfor %}
+          </div>
+        </div>
+      <!-- End Vendors Section -->
+
+      
+      <div class="modal" id="event-details-modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Event Details - <span id="eventId"></span></h3>
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+          </div>
+          <div class="modal-body" id="event-details-content">
+            <!-- Event details will be populated here -->
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" onclick="closeModal()">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vendor ID Modal -->
+      <div class="modal" id="vendor-id-modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Vendor ID Card</h3>
+            <button class="close-modal" id="close-vendor-id-modal">&times;</button>
+          </div>
+          <div class="modal-body" id="vendor-id-content">
+            <!-- Vendor ID image will be displayed here -->
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" onclick="closeModal()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="clients" class="section">
+      <div class="section-header">
+        <h2>Clients</h2>
+        <div class="tab-nav">
+          <div class="tab-item active" data-tab="paid">Paid Clients</div>
+          <div class="tab-item" data-tab="unpaid">Unpaid Clients</div>
+        </div>
+      </div>
+    
+      <!-- Paid Clients Tab -->
+      <div class="tab-content active" data-tab-content="paid">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Client ID</th>
+                <th>Name</th>
+                <th>Mobile</th>
+                <th>Email</th>
+                <th>Event Name</th>
+                <th class="text-right">Amount Paid</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in paid_clients %}
+              <tr>
+                <td>{{ c.client_id }}</td>
+                <td>{{ c.name }}</td>
+                <td>{{ c.phone }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.event_name }}</td>
+                <td class="text-right">₹{{ c.total_paid|floatformat:0 }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="10" style="text-align:center;">No paid clients</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    
+      <!-- Unpaid Clients Tab -->
+      <div class="tab-content" data-tab-content="unpaid">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Client ID</th>
+                <th>Name</th>
+                <th>Mobile</th>
+                <th>Email</th>
+                <th>Event Name</th>
+                <th>Size</th>
+                <th>Event Package</th>
+                <th>Vendor Package</th>
+                <th>Add-On Stalls</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in unpaid_clients %}
+              <tr>
+                <td>{{ c.client_id }}</td>
+                <td>{{ c.name }}</td>
+                <td>{{ c.phone }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.event_name }}</td>
+                <td>{{ c.event_size }}</td>
+                <td>{{ c.event_package_name }}</td>
+                <td>{{ c.vendor_package_name }}</td>
+                <td>
+                  {% for item in c.addon_items %}
+                    <span class="category-pill">{{ item }}</span>
+                  {% empty %}
+                    —
+                  {% endfor %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="9" style="text-align:center;">No unpaid clients</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <script src="{% static 'js/executive.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventEase Vendor Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/vendor.css' %}"  />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h3>EventEase</h3>
+      <p>Vendor Portal</p>
+    </div>
+    <div class="sidebar-menu">
+      <ul>
+        {% if status == 'new' %}
+        <li id="nav-vendor-registration">
+          <a href="#vendor-registration">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>Registration</span>
+          </a>
+        </li>
+        {% endif %}
+        {% if status == 'pending' %}
+        <li id="nav-vendor-status">
+          <a href="#vendor-status">
+            <i class="fa-solid fa-info-circle"></i>
+            <span>Status</span>
+          </a>
+        </li>
+        {% endif %}
+        {% if status == 'approved' %}
+        <li id="nav-vendor-dashboard">
+          <a href="#vendor-dashboard">
+            <i class="fa-solid fa-list"></i>
+            <span>Order Dashboard</span>
+          </a>
+        </li>
+        <li id="nav-upcoming-events">
+          <a href="#your-events">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Upcoming Events</span>
+          </a>
+        </li>
+        {% endif %}
+        <li id="nav-logout">
+          <a href="#" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Log‑out</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <div class="container">
+      <!-- Header with Profile Corner -->
+      <div class="header">
+        <h1>Vendor Dashboard</h1>
+        <div class="user-profile">
+          <div class="user-avatar">
+            {{ vendor_name|slice:":2"|upper }}
+          </div>
+          <div class="user-info">
+            <div class="user-username">{{ vendor_username }}</div>
+            <div class="user-fullname">{{ vendor_name }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Vendor Registration Form -->
+      {% if not reg_submitted %}
+      <div class="form-step active" id="vendor-registration">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2>Vendor Registration</h2>
+          </div>
+          <div class="card-body">
+            <form
+              id="vendor-registration-form"
+              enctype="multipart/form-data"
+              method="post"
+              action="{% url 'api_vendor_register' %}">
+              {% csrf_token %}
+      
+              <div class="form-group">
+                <label for="vendor-name">Vendor Name</label>
+                <input
+                  type="text"
+                  id="vendor-name"
+                  name="name"
+                  class="form-control"
+                  value="{{ vendor.name }}"
+                  readonly>
+              </div>
+      
+              <div class="form-group">
+                <label for="vendor-type">Vendor Type</label>
+                <select
+                  id="vendor-type"
+                  name="vendor_type"
+                  class="form-select"
+                  required>
+                  <option value="">Select Vendor Type</option>
+                  <option value="chef">Chef</option>
+                  <option value="waiter">Waiter</option>
+                  <option value="decoration">Decoration</option>
+                  <option value="photography">Photography</option>
+                  <option value="music">Music &amp; Entertainment</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+      
+              <div class="form-group">
+                <label for="vendor-contact">Contact Number</label>
+                <input
+                  type="text"
+                  id="vendor-contact"
+                  name="phone"
+                  class="form-control"
+                  value="{{ vendor.phone }}"
+                  readonly>
+              </div>
+      
+              <div class="form-group">
+                <label for="vendor-email">Email Address</label>
+                <input
+                  type="email"
+                  id="vendor-email"
+                  name="email"
+                  class="form-control"
+                  value="{{ vendor.email }}"
+                  readonly>
+              </div>
+      
+              <div class="form-group">
+                <label for="vendor-address">Complete Address</label>
+                <textarea
+                  id="vendor-address"
+                  name="address"
+                  class="form-control"
+                  placeholder="Enter your complete address"
+                  required>{{ vendor.address }}</textarea>
+              </div>
+      
+              <div class="form-group">
+                <label for="vendor-id">Government Issued ID Card (PDF/JPG)</label>
+                <input
+                  type="file"
+                  id="vendor-id"
+                  name="id_card"
+                  class="form-control"
+                  accept=".pdf,image/*"
+                  required>
+              </div>
+      
+              <div class="form-actions">
+                <button type="reset" class="btn btn-secondary">Reset</button>
+                <button type="submit" class="btn btn-primary">Register</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Vendor Registration Status -->
+      <!-- Pending -->
+      {% if status == 'pending' %}
+      <div class="form-step active" id="vendor-status">
+        <h2>Status: Pending Verification</h2>
+        <p>Your application is under review by our team.</p>
+      </div>
+      {% endif %}
+
+      <!-- Rejected -->
+      {% if status == 'rejected' %}
+      <div class="form-step active" id="vendor-status">
+        <h2>Status: Rejected</h2>
+        <p><strong>Reason:</strong> {{ vendor.rejection_reason }}</p>
+        <form method="post" action="{% url 'vendor_clear_rejection' %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Register Again</button>
+        </form>
+  
+      </div>
+      {% endif %}
+
+      {% if status == 'approved' %}
+      <div class="form-step active" id="vendor-dashboard">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2>Order Dashboard</h2>
+          </div>
+          <div class="card-body">
+            <h3 style="margin-bottom: 12px;">Pending Service Orders</h3>
+            <div id="service-section">
+               <div id="service-order-list" class="card-grid">
+                <!-- Service order cards go here -->
+              </div>              
+            </div>
+            <div id="addon-section" style="display: none;">
+              <h3 style="margin: 30px 0 12px;">Pending Add-On Food Orders</h3>
+              <div id="addon-order-list" class="card-grid">
+                 <!-- Add-on food order cards go here (chefs only) -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Your Events: Completed / Ongoing / Upcoming -->
+      <div class="form-step" id="your-events">
+        <div class="card fade-in">
+          <div class="card-header">
+            <h2>Your Events</h2>
+          </div>
+          <div class="card-body">
+            <div class="tabs">
+              <div class="tab active" data-target="completed-events">Completed Events</div>
+              <div class="tab" data-target="ongoing-events">Ongoing Events</div>
+              <div class="tab" data-target="upcoming-events">Upcoming Events</div>
+            </div>
+            <div class="events-content">
+              <!-- Completed -->
+              <div class="events-section active" id="completed-events">
+                <div id="completed-list" class="card-grid">
+                  <!-- Completed event cards inserted here -->
+                </div>
+                <div id="completed-empty" class="empty-state" style="display: none;">
+                  No completed events yet.
+                </div>
+              </div>
+              <!-- Ongoing -->
+              <div class="events-section" id="ongoing-events">
+                <div id="ongoing-list" class="card-grid">
+                  <!-- Ongoing event cards inserted here -->
+                </div>
+                <div id="ongoing-empty" class="empty-state" style="display: none;">
+                  No ongoing events.
+                </div>
+              </div>
+              <!-- Upcoming -->
+              <div class="events-section" id="upcoming-events">
+                <div id="upcoming-list" class="card-grid">
+                  <!-- Upcoming event cards inserted here -->
+                </div>
+                <div id="upcoming-empty" class="empty-state" style="display: none;">
+                  No upcoming events.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+    <div id="accept-modal-overlay" class="modal-overlay">
+      <div id="accept-modal" class="modal">
+        <div class="modal-header">
+          <h3>Accept Order & Terms</h3>
+        </div>
+        <div class="modal-body">
+          <div class="terms-section">
+            <h4>Participation Terms</h4>
+            <ul class="terms-list">
+              <li>You must be on-site for the entire duration of the event day (no early departures).</li>
+              <li>You are fully responsible for the safety, security, and insurance of any equipment or personal property you bring.</li>
+              <li>You may only hold one accepted order per calendar date.</li>
+              <li>You must maintain your assigned vendor space in a clean and professional manner at all times.</li>
+              <li>You are fully responsible for your own setup and teardown within the designated timeframes.</li>
+              <li>Arrive at least 30 minutes before your assigned start time and remain until the event officially closes.</li>
+              <li>All participants must wear and display their EventEase–issued ID badge at all times while on site.</li>
+            </ul>
+          </div>
+          
+          <div class="terms-section">
+            <h4>Operational Rules</h4>
+            <ul class="terms-list">
+              <li>You must comply with all event rules, regulations, and staff instructions.</li>
+              <li>Keep your booth and surrounding area tidy; remove waste promptly and recycle where possible.</li>
+              <li>Sharing or subletting of vendor space is strictly prohibited.</li>
+              <li>Familiarize yourself with emergency exits and evacuation procedures; follow staff guidance in any incident.</li>
+              <li>The event organizer reserves the right to remove any vendor for policy violations.</li>
+              <li>All electrical equipment must be approved and meet safety standards.</li>
+            </ul>
+          </div>
+          
+                    
+          <div class="terms-section">
+            <h4>Guest Service Terms</h4>
+            <ul class="terms-list">
+              <li>Always check each guest’s valid event pass or government-issued ID before serving.</li>
+              <li>If anyone without a valid pass or badge is found, report immediately to the on–site manager or security.</li>
+              <li>Treat every guest with politeness and respect; maintain a friendly, helpful demeanor.</li>
+              <li>Listen to guest concerns calmly, attempt to resolve on the spot, and escalate unresolved issues to supervisory staff.</li>
+              <li>When handling or serving food and beverages, follow all health-code guidelines and use proper protective gear.</li>
+            </ul>
+          </div>
+          <div class="checkbox-container">
+            <input type="checkbox" id="accept-terms-checkbox">
+            <label for="accept-terms-checkbox">I have read, understood, and agree to all terms and conditions listed above.</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="accept-confirm-btn" class="btn" disabled>Accept Order</button>
+          <button id="accept-cancel-btn" class="btn btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Decline Modal -->
+    <div id="decline-modal-overlay" class="modal-overlay">
+      <div id="decline-modal" class="modal">
+        <div class="modal-header">
+          <h3>Decline Order</h3>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to decline this vendor opportunity?</p>
+          <p>Please note that declining may affect your eligibility for future events.</p>
+          <textarea id="decline-reason-input" placeholder="Please provide a reason for declining (optional but appreciated)"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button id="decline-confirm-btn" class="btn">Yes, Decline Order</button>
+          <button id="decline-cancel-btn" class="btn btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Expose the vendor type for the static JS to read
+    window.VENDOR_TYPE = "{{ vendor.vendor_type }}";
+    console.log("Vendor type is:", window.VENDOR_TYPE);
+  </script>
+  <script src="{% static 'js/vendor.js' %}"></script>
+</body>
+</html>
