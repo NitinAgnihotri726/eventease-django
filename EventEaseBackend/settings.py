@@ -6,17 +6,20 @@ Generated for EventEase with Django 5.0.6 and Python 3.12.3.
 import os
 
 from pathlib import Path
-
+from dotenv import load_dotenv
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
-SECRET_KEY = 'Our-secret-key'
+
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = [ 'localhost', '192.168.152.227', '127.0.0.1', '.onrender.com']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 # Application definition
 
@@ -32,6 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -61,19 +65,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'EventEaseBackend.wsgi.application'
 
 # Database configuration for MySQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'eventeasedb',        
-        'USER': 'root',   
-        'PASSWORD': '', 
-        'HOST': 'localhost',
-        'PORT': '3306',             
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'eventeasedb',        
+#         'USER': 'root',   
+#         'PASSWORD': '', 
+#         'HOST': 'localhost',
+#         'PORT': '3306',             
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         },
+#     }
+# }
 
 # Password validation – using default validators
 AUTH_PASSWORD_VALIDATORS = [
